@@ -69,7 +69,7 @@ namespace Kvant
 
             // Working buffers
             var vtx_out = new List<Vector3>();
-            var uv0_out = new List<Vector2>();
+            var uv0_out = new List<Vector3>();
             var idx_out = new List<int>();
 
             // Repeat the source mesh.
@@ -80,7 +80,7 @@ namespace Kvant
 
                 vtx_out.AddRange(vtx_in);
 
-                var uv0 = new Vector2((float)i / _instanceCount, 0);
+                var uv0 = new Vector3((float)i / _instanceCount, Random.value, Random.value);
                 uv0_out.AddRange(Enumerable.Repeat(uv0, vtx_in.Length));
             }
 

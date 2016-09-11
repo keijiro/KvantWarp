@@ -29,7 +29,7 @@ half3 _Emission;
 struct appdata
 {
     float4 vertex : POSITION;
-    float2 uv : TEXCOORD0;
+    float3 uvw : TEXCOORD0; // (line ID, random0, random1)
 };
 
 struct v2f
@@ -39,10 +39,10 @@ struct v2f
 
 v2f vert(appdata v)
 {
+    float3 p = ApplyLineParams(v.vertex.xyz, v.uvw) + GetLinePosition(v.uvw);
+
     v2f o;
-    v.vertex.xyz = ApplyLineParams(v.vertex.xyz, v.uv.x);
-    v.vertex.xyz += GetLinePosition(v.uv.x);
-    o.vertex = UnityObjectToClipPos(v.vertex);
+    o.vertex = UnityObjectToClipPos(float4(p, 1));
     return o;
 }
 

@@ -24,6 +24,10 @@
 
 #include "UnityCG.cginc"
 
+// Note:
+// Texcoord0 in the vertex data gives a line ID (line number) and
+// two random numbers. We can use them to scatter the lines.
+
 // Seed for PRNG
 float _RandomSeed;
 
@@ -38,9 +42,11 @@ float LineRandom(float ln, float salt)
 float _LineRadius;
 float2 _LineWidth; // (min, max)
 
-float3 ApplyLineParams(float3 v, float ln)
+float3 ApplyLineParams(float3 v, float3 uvw)
 {
-    float sz = lerp(_LineWidth.x, _LineWidth.y, LineRandom(ln, 0));
+    // Get a random width using a random number from the vertex.
+    float sz = lerp(_LineWidth.x, _LineWidth.y, uvw.y);
+
     return v * float3(_LineRadius, _LineRadius, sz);
 }
 
@@ -49,13 +55,20 @@ float3 _Extent;
 float _SpeedRandomness;
 float _NormalizedTime;
 
-float3 GetLinePosition(float ln)
+float3 GetLinePosition(float3 uvw)
 {
-    float z = LineRandom(ln, 4);
-    z = z + _NormalizedTime * (1 - _SpeedRandomness * LineRandom(ln, 1));
+    // Z offset <= random number from the vertex
+    float z = uvw.z;
 
-    ln += trunc(z);
-    float2 xy = float2(LineRandom(ln, 2), LineRandom(ln, 3));
+    // Apply the speed and time, using (1-z) as speed randomizer.
+    z = z + _NormalizedTime * (1 - _SpeedRandomness * (1 - z));
 
+    // Line ID <= original ID + number of wrapping around
+    float ln = uvw.x + trunc(z);
+
+    // Random offset
+    float2 xy = float2(LineRandom(ln, 0), LineRandom(ln, 1));
+
+    // Apply the extent.
     return (float3(xy, frac(z)) - 0.5) * _Extent;
 }
