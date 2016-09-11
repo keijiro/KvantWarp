@@ -50,18 +50,24 @@ float3 ApplyLineParams(float3 v, float3 uvw)
     return v * float3(_LineRadius, _LineRadius, sz);
 }
 
+// Line speed
+float _SpeedRandomness;
+
+float GetLineSpeed(float3 uvw)
+{
+    return 1 - _SpeedRandomness * (1 - uvw.z);
+}
+
 // Line position
 float3 _Extent;
-float _SpeedRandomness;
-float _NormalizedTime;
 
-float3 GetLinePosition(float3 uvw)
+float3 GetLinePosition(float3 uvw, float time)
 {
     // Z offset <= random number from the vertex
     float z = uvw.z;
 
-    // Apply the speed and time, using (1-z) as speed randomizer.
-    z = z + _NormalizedTime * (1 - _SpeedRandomness * (1 - z));
+    // Apply speed and time.
+    z += GetLineSpeed(uvw) * time;
 
     // Line ID <= original ID + number of wrapping around
     float ln = uvw.x + trunc(z);
@@ -70,5 +76,5 @@ float3 GetLinePosition(float3 uvw)
     float2 xy = float2(LineRandom(ln, 0), LineRandom(ln, 1));
 
     // Apply the extent.
-    return (float3(xy, frac(z)) - 0.5) * _Extent;
+    return (0.5 - float3(xy, frac(z))) * _Extent;
 }

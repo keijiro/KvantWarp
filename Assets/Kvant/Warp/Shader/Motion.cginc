@@ -24,8 +24,12 @@
 
 #include "Common.cginc"
 
-half3 _Emission;
+float4x4 _NonJitteredVP;
+float4x4 _PreviousVP;
+float4x4 _PreviousM;
+
 float _NormalizedTime;
+float _NormalizedDeltaTime;
 
 struct appdata
 {
@@ -36,19 +40,40 @@ struct appdata
 struct v2f
 {
     float4 vertex : SV_POSITION;
+    float4 transfer0 : TEXCOORD0;
+    float4 transfer1 : TEXCOORD1;
 };
 
 v2f vert(appdata v)
 {
-    float3 p = ApplyLineParams(v.vertex.xyz, v.uvw);
-    p += GetLinePosition(v.uvw, _NormalizedTime);
+    // Current position
+    float3 p1 = ApplyLineParams(v.vertex.xyz, v.uvw);
+    p1 += GetLinePosition(v.uvw, _NormalizedTime);
 
+    // Previous position
+    float3 p0 = p1;
+    p0.z += _Extent.z * GetLineSpeed(v.uvw) * _NormalizedDeltaTime;
+
+    // Transfer the data to the pixel shader.
     v2f o;
-    o.vertex = UnityObjectToClipPos(float4(p, 1));
+    o.vertex = UnityObjectToClipPos(float4(p1, 1));
+    o.transfer0 = mul(_PreviousVP, mul(_PreviousM,  float4(p0, 1)));
+    o.transfer1 = mul(_NonJitteredVP, mul(unity_ObjectToWorld, float4(p1, 1)));
     return o;
 }
 
 half4 frag(v2f i) : SV_Target
 {
-    return half4(_Emission, 1);
+    float3 hp0 = i.transfer0.xyz / i.transfer0.w;
+    float3 hp1 = i.transfer1.xyz / i.transfer1.w;
+
+    float2 vp0 = (hp0.xy + 1) / 2;
+    float2 vp1 = (hp1.xy + 1) / 2;
+
+#if UNITY_UV_STARTS_AT_TOP
+    vp0.y = 1 - vp0.y;
+    vp1.y = 1 - vp1.y;
+#endif
+
+    return half4(vp1 - vp0, 0, 1);
 }

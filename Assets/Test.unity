@@ -102,6 +102,8 @@ GameObject:
   - 92: {fileID: 438798592}
   - 124: {fileID: 438798591}
   - 81: {fileID: 438798590}
+  - 114: {fileID: 438798595}
+  - 114: {fileID: 438798596}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -138,8 +140,8 @@ Camera:
   m_GameObject: {fileID: 438798589}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.10964532, g: 0.17852506, b: 0.28676468, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -177,6 +179,44 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &438798595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 438798589}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1e83ab3c6c9d7468fff9be485a1390, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _source: 2
+  _blendRatio: 0.5
+  _preferDepthNormals: 0
+  _depthRepeat: 1
+  _validateNormals: 0
+  _motionOverlayAmplitude: 20
+  _motionVectorsAmplitude: 100
+  _motionVectorsResolution: 16
+  _shader: {fileID: 4800000, guid: f104e85b3463c2748a02d2f07582fa63, type: 3}
+--- !u!114 &438798596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 438798589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860e82cd7a6bb4a29a4b7add4ec78d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shutterAngle: 360
+  _sampleCount: 8
+  _frameBlending: 0
+  _reconstructionShader: {fileID: 4800000, guid: 60701d53f4c638048b5e49c197d08b77,
+    type: 3}
+  _frameBlendingShader: {fileID: 4800000, guid: 95caa7c3844725840aec8dad64ac258e,
+    type: 3}
 --- !u!1 &1032947137
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,10 +319,10 @@ MonoBehaviour:
   _template: {fileID: 11400000, guid: fa4ba53939fe7e24e818232169f01a44, type: 2}
   _throttle: 1
   _extent: {x: 100, y: 100, z: 100}
-  _lineRadius: 0.1
+  _lineRadius: 0.03
   _lineWidth: 10
   _lineWidthRandomness: 0.5
-  _speed: 100
+  _speed: 200
   _speedRandomness: 0.5
   _randomSeed: 0
   _defaultMaterial: {fileID: 2100000, guid: a172ea80982dad64a9f7ab0ce7670de0, type: 2}
@@ -321,10 +361,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2059626089}
-  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2

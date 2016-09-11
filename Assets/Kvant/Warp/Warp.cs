@@ -94,6 +94,7 @@ namespace Kvant
 
         // Variables for simulation
         float _time;
+        float _deltaTime;
 
         // Custom properties applied to the mesh renderer.
         MaterialPropertyBlock _propertyBlock;
@@ -126,6 +127,7 @@ namespace Kvant
 
             pb.SetFloat("_RandomSeed", _randomSeed);
             pb.SetFloat("_NormalizedTime", _time);
+            pb.SetFloat("_NormalizedDeltaTime", _deltaTime);
             pb.SetFloat("_Throttle", _throttle);
             pb.SetVector("_Extent", _extent);
             pb.SetFloat("_LineRadius", _lineRadius);
@@ -152,9 +154,15 @@ namespace Kvant
             // Advance time.
             var speed = _speed / _extent.z;
             if (Application.isPlaying)
-                _time += Time.deltaTime * speed;
+            {
+                _deltaTime = Time.deltaTime * speed;
+                _time += _deltaTime;
+            }
             else
+            {
+                _deltaTime = 0.1f * speed;
                 _time = 10 * speed;
+            }
 
             // Update external components (mesh filter and renderer).
             UpdateMeshFilter();

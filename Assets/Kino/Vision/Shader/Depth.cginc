@@ -1,5 +1,5 @@
 //
-// Kvant/Warp - Warp (hyperspace) light streaks effect
+// Kino/Vision - Frame visualization utility
 //
 // Copyright (C) 2016 Keijiro Takahashi
 //
@@ -22,35 +22,44 @@
 // THE SOFTWARE.
 //
 
-Shader "Kvant/Warp/Surface"
+#include "Common.cginc"
+
+half _Blend;
+half _Repeat;
+
+sampler2D_float _CameraDepthTexture;
+sampler2D _CameraDepthNormalsTexture;
+
+float LinearizeDepth(float z)
 {
-    Properties
-    {
-        [HDR] _Emission("Emission Color", Color) = (2, 2, 2)
-    }
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
-        Pass
-        {
-            Tags { "LightMode" = "MotionVectors" }
-            ZWrite Off Cull Off
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Motion.cginc"
-            ENDCG
-        }
-        Pass
-        {
-            Tags { "LightMode" = "ForwardBase" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Surface.cginc"
-            ENDCG
-        }
-    }
+    float isOrtho = unity_OrthoParams.w;
+    float isPers = 1 - unity_OrthoParams.w;
+    z *= _ZBufferParams.x;
+    return (1 - isOrtho * z) / (isPers * z + _ZBufferParams.y);
+}
+
+half4 frag_depth(v2f_common i) : SV_Target
+{
+    half4 src = tex2D(_MainTex, i.uv);
+
+#ifdef USE_CAMERA_DEPTH
+    float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uvAlt);
+    depth = LinearizeDepth(depth);
+#else // USE_CAMERA_DEPTH_NORMALS
+    float4 cdn = tex2D(_CameraDepthNormalsTexture, i.uvAlt);
+    float depth = DecodeFloatRG(cdn.zw);
+#endif
+
+    float dr = frac(depth * _Repeat);
+    float d1 = 1 - dr;
+    float d2 = 1 / (1 + dr * 100);
+    half3 rgb = half3(d1, d2, d2);
+
+#if !UNITY_COLORSPACE_GAMMA
+    rgb = GammaToLinearSpace(rgb);
+#endif
+
+    rgb = lerp(src.rgb, rgb, _Blend);
+
+    return half4(rgb, src.a);
 }

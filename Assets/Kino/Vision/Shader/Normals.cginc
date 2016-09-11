@@ -1,5 +1,5 @@
 //
-// Kvant/Warp - Warp (hyperspace) light streaks effect
+// Kino/Vision - Frame visualization utility
 //
 // Copyright (C) 2016 Keijiro Takahashi
 //
@@ -22,35 +22,39 @@
 // THE SOFTWARE.
 //
 
-Shader "Kvant/Warp/Surface"
+#include "Common.cginc"
+
+half _Blend;
+half _Validate;
+
+sampler2D _CameraGBufferTexture2;
+sampler2D _CameraDepthNormalsTexture;
+
+half4 frag_normals(v2f_common i) : SV_Target
 {
-    Properties
-    {
-        [HDR] _Emission("Emission Color", Color) = (2, 2, 2)
-    }
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
-        Pass
-        {
-            Tags { "LightMode" = "MotionVectors" }
-            ZWrite Off Cull Off
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Motion.cginc"
-            ENDCG
-        }
-        Pass
-        {
-            Tags { "LightMode" = "ForwardBase" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Surface.cginc"
-            ENDCG
-        }
-    }
+    half4 src = tex2D(_MainTex, i.uv);
+
+#ifdef USE_CAMERA_DEPTH_NORMALS
+    float4 cdn = tex2D(_CameraDepthNormalsTexture, i.uvAlt);
+    float3 n = DecodeViewNormalStereo(cdn);
+    float isZero = (dot(n, 1) == 0);
+#else // USE_GBUFFER
+    float3 n = tex2D(_CameraGBufferTexture2, i.uvAlt).xyz;
+    float isZero = (dot(n, 1) == 0);
+    n = mul((float3x3)unity_WorldToCamera, n * 2 - 1);
+    n.z = -n.z;
+#endif
+
+    float l = length(n);
+    float invalid = max(l < 0.99, l > 1.01) - isZero;
+
+    n = (n + 1) * 0.5;
+#if !UNITY_COLORSPACE_GAMMA
+    n = GammaToLinearSpace(n);
+#endif
+
+    half3 rgb = lerp(n, half3(1, 0, 0), invalid * _Validate);
+    rgb = lerp(src.rgb, rgb, _Blend);
+
+    return half4(rgb, src.a);
 }

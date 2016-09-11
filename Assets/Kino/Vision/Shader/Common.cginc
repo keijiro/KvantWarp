@@ -1,5 +1,5 @@
 //
-// Kvant/Warp - Warp (hyperspace) light streaks effect
+// Kino/Vision - Frame visualization utility
 //
 // Copyright (C) 2016 Keijiro Takahashi
 //
@@ -22,35 +22,31 @@
 // THE SOFTWARE.
 //
 
-Shader "Kvant/Warp/Surface"
+#include "UnityCG.cginc"
+
+sampler2D _MainTex;
+float4 _MainTex_TexelSize;
+float4 _MainTex_ST;
+
+// Common vertex shader
+struct v2f_common
 {
-    Properties
-    {
-        [HDR] _Emission("Emission Color", Color) = (2, 2, 2)
-    }
-    SubShader
-    {
-        Tags { "RenderType"="Opaque" }
-        Pass
-        {
-            Tags { "LightMode" = "MotionVectors" }
-            ZWrite Off Cull Off
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Motion.cginc"
-            ENDCG
-        }
-        Pass
-        {
-            Tags { "LightMode" = "ForwardBase" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma target 3.0
-            #include "Surface.cginc"
-            ENDCG
-        }
-    }
+    float4 pos : SV_POSITION;
+    half2 uv : TEXCOORD0;    // Screen space UV (supports stereo rendering)
+    half2 uvAlt : TEXCOORD2; // Alternative UV (supports v-flip case)
+};
+
+v2f_common vert_common(appdata_img v)
+{
+    half2 uvAlt = v.texcoord;
+#if UNITY_UV_STARTS_AT_TOP
+    if (_MainTex_TexelSize.y < 0) uvAlt.y = 1 - uvAlt.y;
+#endif
+
+    v2f_common o;
+    o.pos = UnityObjectToClipPos(v.vertex);
+    o.uv = UnityStereoScreenSpaceUVAdjust(v.texcoord, _MainTex_ST);
+    o.uvAlt = UnityStereoScreenSpaceUVAdjust(uvAlt, _MainTex_ST);
+
+    return o;
 }
