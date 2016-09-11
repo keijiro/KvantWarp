@@ -160,7 +160,7 @@ namespace Kvant
             }
             else
             {
-                _deltaTime = 0.1f * speed;
+                _deltaTime = speed / 30;
                 _time = 10 * speed;
             }
 
@@ -169,15 +169,13 @@ namespace Kvant
             UpdateMeshRenderer();
         }
 
-/*
         void OnDrawGizmosSelected()
         {
             // Show the attractor position.
-            var atpos = _attractor ? _attractor.position : _attractorPosition;
+            Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(atpos, 0.1f);
+            Gizmos.DrawWireCube(Vector3.zero, _extent);
         }
-        */
 
         #endregion
     }

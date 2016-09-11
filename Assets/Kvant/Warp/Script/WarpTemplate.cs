@@ -80,7 +80,7 @@ namespace Kvant
 
                 vtx_out.AddRange(vtx_in);
 
-                var uv0 = new Vector3((float)i / _instanceCount, Random.value, Random.value);
+                var uv0 = new Vector3((i + 0.5f) / _instanceCount, Random.value, Random.value);
                 uv0_out.AddRange(Enumerable.Repeat(uv0, vtx_in.Length));
             }
 
