@@ -276,10 +276,10 @@ MonoBehaviour:
   _throttle: 1
   _extent: {x: 100, y: 100, z: 200}
   _lineRadius: 0.03
-  _lineWidth: 10
-  _lineWidthRandomness: 0.5
-  _speed: 200
-  _speedRandomness: 0.5
+  _lineWidth: 24.3
+  _lineWidthRandomness: 0.373
+  _speed: 173.74
+  _speedRandomness: 0.291
   _randomSeed: 0
   _defaultMaterial: {fileID: 2100000, guid: a172ea80982dad64a9f7ab0ce7670de0, type: 2}
 --- !u!23 &2059626092
