@@ -48,6 +48,7 @@ Shader "Kvant/Warp/Surface"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+			#pragma multi_compile_fog
             #pragma target 3.0
             #include "Surface.cginc"
             ENDCG

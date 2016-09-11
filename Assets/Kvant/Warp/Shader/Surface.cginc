@@ -36,6 +36,7 @@ struct appdata
 struct v2f
 {
     float4 vertex : SV_POSITION;
+    UNITY_FOG_COORDS(0)
 };
 
 v2f vert(appdata v)
@@ -45,10 +46,13 @@ v2f vert(appdata v)
 
     v2f o;
     o.vertex = UnityObjectToClipPos(float4(p, 1));
+    UNITY_TRANSFER_FOG(o, o.vertex);
     return o;
 }
 
 half4 frag(v2f i) : SV_Target
 {
-    return half4(_Emission, 1);
+    half4 col = half4(_Emission, 1);
+    UNITY_APPLY_FOG(i.fogCoord, col);
+    return col;
 }
