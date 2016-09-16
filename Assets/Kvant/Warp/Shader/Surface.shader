@@ -42,16 +42,10 @@ Shader "Kvant/Warp/Surface"
             #include "Motion.cginc"
             ENDCG
         }
-        Pass
-        {
-            Tags { "LightMode" = "ForwardBase" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-			#pragma multi_compile_fog
-            #pragma target 3.0
-            #include "Surface.cginc"
-            ENDCG
-        }
+        CGPROGRAM
+        #pragma surface surf Standard vertex:vert nolightmap
+        #pragma target 3.0
+        #include "Surface.cginc"
+        ENDCG
     }
 }

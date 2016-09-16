@@ -27,32 +27,19 @@
 half3 _Emission;
 float _NormalizedTime;
 
-struct appdata
+struct Input
 {
-    float4 vertex : POSITION;
-    float3 uvw : TEXCOORD0; // (line ID, random0, random1)
+    float unuseddd;
 };
 
-struct v2f
+void vert(inout appdata_full v)
 {
-    float4 vertex : SV_POSITION;
-    UNITY_FOG_COORDS(0)
-};
-
-v2f vert(appdata v)
-{
-    float3 p = ApplyLineParams(v.vertex.xyz, v.uvw);
-    p += GetLinePosition(v.uvw, _NormalizedTime);
-
-    v2f o;
-    o.vertex = UnityObjectToClipPos(float4(p, 1));
-    UNITY_TRANSFER_FOG(o, o.vertex);
-    return o;
+    float3 p = ApplyLineParams(v.vertex.xyz, v.texcoord.xyz);
+    p += GetLinePosition(v.texcoord.xyz, _NormalizedTime);
+    v.vertex.xyz = p;
 }
 
-half4 frag(v2f i) : SV_Target
+void surf(Input IN, inout SurfaceOutputStandard o)
 {
-    half4 col = half4(_Emission, 1);
-    UNITY_APPLY_FOG(i.fogCoord, col);
-    return col;
+    o.Emission = _Emission;
 }

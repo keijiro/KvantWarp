@@ -77,7 +77,7 @@ float3 GetLinePosition(float3 uvw, float time)
     float2 xy = float2(LineRandom(ln, 0), LineRandom(ln, 1));
 
     // Offset by throttling
-    float offset = (uvw.x > _Throttle) * 1e6;
+    float offset = (uvw.x > _Throttle) * 1000000;
 
     // Apply the extent.
     return (0.5 - float3(xy, frac(z))) * _Extent + offset;
