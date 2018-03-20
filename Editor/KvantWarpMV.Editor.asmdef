@@ -1,0 +1,12 @@
+{
+    "name": "Kvant.Warp.Editor",
+    "references": [
+        "Kvant.Warp"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

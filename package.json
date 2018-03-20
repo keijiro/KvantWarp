@@ -1,0 +1,8 @@
+{
+    "name": "jp.keijiro.kvant.warp",
+    "displayName": "Kvant Warp",
+    "version": "0.0.1",
+    "unity": "2018.1",
+    "description": "Kvant Warp is a custom mesh renderer that replicates sci-fi warp drive effects.",
+    "dependencies": { }
+}
