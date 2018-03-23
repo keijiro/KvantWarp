@@ -22,13 +22,15 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace Kvant
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshRenderer))]
     [AddComponentMenu("Kvant/Warp")]
-    public class Warp : MonoBehaviour
+    public class Warp : MonoBehaviour, ITimeControl, IPropertyPreview
     {
         #region Basic settings
 
@@ -96,6 +98,9 @@ namespace Kvant
         float _time;
         float _deltaTime;
 
+        float _externalTime = -1;
+        float _externalDeltaTime;
+
         // Custom properties applied to the mesh renderer.
         MaterialPropertyBlock _propertyBlock;
 
@@ -153,15 +158,24 @@ namespace Kvant
 
             // Advance time.
             var speed = _speed / _extent.z;
-            if (Application.isPlaying)
+            if (_externalTime < 0)
             {
-                _deltaTime = Time.deltaTime * speed;
-                _time += _deltaTime;
+                if (Application.isPlaying)
+                {
+                    _deltaTime = Time.deltaTime * speed;
+                    _time += _deltaTime;
+                }
+                else
+                {
+                    _deltaTime = speed / 30;
+                    _time = 10 * speed;
+                }
             }
-            else
+            else if (_externalDeltaTime != 0)
             {
-                _deltaTime = speed / 30;
-                _time = 10 * speed;
+                _deltaTime = _externalDeltaTime * speed;
+                _time += _deltaTime;
+                _externalDeltaTime = 0;
             }
 
             // Update external components (mesh filter and renderer).
@@ -175,6 +189,35 @@ namespace Kvant
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireCube(Vector3.zero, _extent);
+        }
+
+        #endregion
+
+        #region ITimeControl functions
+
+        public void OnControlTimeStart()
+        {
+            _externalTime = 0;
+            _externalDeltaTime = 0;
+        }
+
+        public void OnControlTimeStop()
+        {
+            _externalTime = -1;
+        }
+
+        public void SetTime(double time)
+        {
+            _externalDeltaTime = (float)time - _externalTime;
+            _externalTime = (float)time;
+        }
+
+        #endregion
+
+        #region IPropertyPreview implementation
+
+        public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+        {
         }
 
         #endregion
