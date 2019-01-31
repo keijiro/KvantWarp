@@ -43,13 +43,13 @@ namespace Kvant
             get { return _mesh; }
         }
 
-        [SerializeField] Mesh _mesh;
+        [SerializeField] Mesh _mesh = null;
 
         #endregion
 
         #region Private members
 
-        [SerializeField] Mesh _sourceShape;
+        [SerializeField] Mesh _sourceShape = null;
 
         #endregion
 
@@ -90,7 +90,6 @@ namespace Kvant
             _mesh.SetUVs(0, uv0_out);
             _mesh.SetIndices(idx_out.ToArray(), MeshTopology.Triangles, 0);
             _mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
-            _mesh.Optimize();
             _mesh.UploadMeshData(true);
         }
 
