@@ -43,13 +43,13 @@ namespace Kvant
             get { return _mesh; }
         }
 
-        [SerializeField] Mesh _mesh;
+        [SerializeField] Mesh _mesh = null;
 
         #endregion
 
         #region Private members
 
-        [SerializeField] Mesh _sourceShape;
+        [SerializeField] Mesh _sourceShape = null;
 
         #endregion
 

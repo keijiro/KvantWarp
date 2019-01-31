@@ -34,7 +34,7 @@ namespace Kvant
     {
         #region Basic settings
 
-        [SerializeField] WarpTemplate _template;
+        [SerializeField] WarpTemplate _template = null;
 
         [SerializeField, Range(0, 1)] float _throttle = 1.0f;
 
@@ -92,7 +92,7 @@ namespace Kvant
         #region Private members
 
         // References to the built-in assets
-        [SerializeField] Material _defaultMaterial;
+        [SerializeField] Material _defaultMaterial = null;
 
         // Variables for simulation
         float _time;
