@@ -1,7 +1,7 @@
 {
-    "name": "jp.keijiro.kvant.warp.Editor",
+    "name": "Kvant.Warp.Editor",
     "references": [
-        "jp.keijiro.kvant.warp.Runtime"
+        "Kvant.Warp"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
